@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "target": "ES2021",
+        "useDefineForClassFields": true,
+        "module": "ESNext",
+        "lib": ["ES2021.String", "DOM", "DOM.Iterable"],
+        "skipLibCheck": true,
+        "moduleResolution": "bundler",
+        "allowImportingTsExtensions": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "noEmit": true,
+        "jsx": "preserve",
+        "strict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noFallthroughCasesInSwitch": true,
+        "paths": {
+            "@src/*": ["./src/*"],
+            "@core/*": ["./src/core/*"],
+            "@features/*": ["./src/renderer/features/*"],
+            "@shared/*": ["./src/renderer/shared/*"],
+            "@icons/*": ["./src/renderer/assets/icons/*"]
+        }
+    },
+    "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "electron"]
+}

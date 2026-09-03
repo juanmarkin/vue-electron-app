@@ -1,0 +1,31 @@
+{
+    "name": "vue-electron-app",
+    "private": true,
+    "version": "1.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vue-tsc && vite build && electron-builder",
+        "build:win": "vue-tsc && vite build && electron-builder --win",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "motion-v": "^2.3.0",
+        "pinia": "^3.0.4",
+        "prettier": "^3.8.3",
+        "sass": "^1.100.0",
+        "vue": "^3.4.21",
+        "xlsx": "^0.18.5"
+    },
+    "devDependencies": {
+        "@vitejs/plugin-vue": "^5.2.4",
+        "electron": "^30.0.1",
+        "electron-builder": "^24.13.3",
+        "typescript": "^5.2.2",
+        "vite": "^5.1.6",
+        "vite-plugin-electron": "^0.28.6",
+        "vite-plugin-electron-renderer": "^0.14.5",
+        "vue-tsc": "^2.0.26"
+    },
+    "main": "dist-electron/main.js"
+}

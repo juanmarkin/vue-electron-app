@@ -2,49 +2,68 @@
 
 A public engineering showcase based on a real production desktop application built with Vue 3, TypeScript and Electron.
 
-The original product is a specialized editor for working with Russian dialect texts. It includes a complex document model, multi-layer text editing, morphological analysis, metadata workflows, XHTML import/export, desktop file-system integration and a Vue-based editing interface.
+The original product is a specialized desktop editor for working with Russian dialect texts. It includes a typed document model, synchronized text layers, morphological analysis, metadata workflows, XHTML import/export, desktop file-system integration and a feature-rich Vue interface.
 
 ## Public showcase notice
 
-This repository is a sanitized public version of a real production codebase. It is published to demonstrate frontend and desktop application architecture, TypeScript practices, state management, Electron IPC, complex UI workflows and domain-oriented data processing.
+This repository is a **sanitized public extraction of a real production codebase**, not the complete distributable product.
 
-Some parts of the original application are intentionally **not included** because they contain third-party intellectual property and runtime data that cannot be redistributed publicly.
+It is published to demonstrate engineering decisions from the original application: Vue + TypeScript structure, Electron process boundaries, typed IPC contracts, domain-oriented document models, tokenization, desktop file handling and complex text-processing workflows.
 
-The omitted `resources/` directory contains, among other things:
+Several production features are intentionally removed or replaced because they depend on third-party intellectual property and linguistic assets that cannot be redistributed publicly.
 
-- an external morphological analyzer executable used by the production application;
+### What is intentionally excluded
+
+The original repository contains a `resources/` directory that is **not present at all** in this public repository. It includes, among other things:
+
+- an external morphological analyzer executable;
 - linguistic dictionaries and analyzer configuration files;
 - semantic and dialect datasets;
-- metadata dictionaries, schemas and legacy compatibility tables.
+- metadata dictionaries and schemas;
+- legacy compatibility tables used by the production editor.
 
-As a result, functionality that depends on those assets — primarily production morphological analysis and parts of metadata/dictionary loading — cannot work exactly as it does in the original product without the private resources.
+The public repository also does not contain generated application builds (`build/`, `dist-electron/`) or the private repository history.
 
-The application source code, architecture and UI flows are preserved here to show how those systems are integrated. Generated build artifacts are also intentionally omitted from the public repository.
+A large production-specific detranscription ruleset has additionally been replaced by a public-safe adapter. The exported API is preserved so the architecture and document pipeline remain understandable, but the original linguistic transformation rules are not redistributed here.
 
-## What the application does
+### Effect on functionality
 
-The original application provides a desktop workflow for editing and annotating dialect texts:
+The production application supports full morphological analysis, metadata dictionaries, domain-specific detranscription, rich XHTML round-tripping and additional linguistic editing workflows.
 
-- imports raw `.txt` text and previously annotated `.xhtml` / `.html` documents;
+In this public version:
+
+- `.txt` files can be opened through Electron;
+- the application builds the typed working document and tokenized text layers;
+- the Electron → preload → renderer boundary remains visible in code;
+- protected morphology and metadata endpoints return an explicit `unavailable-in-public-showcase` result instead of trying to load missing assets;
+- the production detranscription rules are replaced by normalization-only public adapters;
+- the renderer is reduced to a small showcase screen focused on the document/tokenization flow.
+
+This keeps the repository safe to publish while preserving the architectural parts that are most relevant for engineering review.
+
+## Original product capabilities
+
+The production application provides a desktop workflow for editing and annotating dialect texts:
+
+- imports raw `.txt` text and annotated `.xhtml` / `.html` documents;
 - maintains synchronized text layers and word-level document state;
 - supports word editing, splitting and merging word forms, stress marks and layer editing;
 - runs morphological analysis for individual words and full documents;
-- provides tools for reviewing and editing morphological analyses, grammatical properties and dialect features;
-- manages document metadata, including address, phonetic, dialect-text and geographic data;
+- provides tools for reviewing analyses, grammatical properties and dialect features;
+- manages address, phonetic, dialect-text and geographic metadata;
 - exports metadata to legacy-compatible spreadsheet files;
 - saves annotated documents as dialect XHTML while preserving morphology and metadata;
-- handles desktop file operations, application menus, IPC communication, loading states, warnings and recoverable/critical errors.
+- handles desktop file operations, application menus, loading states and structured errors.
 
 ## Architecture
 
-The project separates framework-independent domain logic from the Electron desktop layer and Vue renderer.
+The production project separates framework-independent domain logic from the Electron desktop layer and the Vue renderer.
 
 ```text
 src/
-├── core/       # document model, tokenization, morphology, metadata, serialization
-├── main/       # Electron main process, IPC, filesystem and morphology integration
-├── renderer/   # Vue UI, feature modules, Pinia stores and shared components
-└── shared/     # shared errors, IPC result types and logging
+├── core/       # document model, tokenization and domain contracts
+├── main/       # Electron main process and IPC
+└── renderer/   # Vue UI
 ```
 
 A typical desktop flow is:
@@ -61,43 +80,18 @@ main process
 filesystem / domain services / external runtime integrations
 ```
 
-Most document transformations and text-processing logic live in `src/core`, keeping them independent from Vue and Electron-specific APIs.
+The public extraction keeps the same process boundary and the core working-document model while replacing protected runtime integrations with controlled showcase responses.
 
 ## Engineering highlights
 
-- Feature-oriented Vue renderer with reusable shared UI components.
-- Complex editor state managed through Pinia and typed domain models.
-- Explicit Electron security boundary using preload APIs and IPC contracts.
-- Domain logic separated from renderer concerns.
-- Typed success/error IPC result model and centralized error handling.
-- XHTML parsing and serialization with round-trip checks.
-- Multi-layer tokenized text model with word-level editing operations.
-- Adapter-based morphology pipeline designed around replaceable engines.
-- Desktop-specific file handling, application menu integration and unsaved-change state.
-
-## Morphology integration
-
-In the production version, morphological analysis runs outside the renderer:
-
-```text
-Renderer → preload API → IPC → MorphologyPipeline → LemmerEngine
-```
-
-The TypeScript pipeline is responsible for preprocessing, parsing analyzer output, applying transformation rules, semantic enrichment, grammar normalization and converting results into editor state.
-
-The codebase contains adapters for native Windows execution, Wine-based execution on macOS/Linux and a deterministic mock engine for development. The actual production analyzer binary and its datasets are intentionally excluded from this public repository.
-
-## Document model and serialization
-
-The working model is a `WorkingDialectDocument` containing tokenized text, synchronized layers, morphology, selection state and metadata.
-
-The primary durable format in the production application is dialect XHTML. Import/export logic is located in:
-
-```text
-src/core/document/serialization/xhtml/
-```
-
-Morphological analyses are serialized into annotation nodes, while application metadata is stored alongside the document in a structured payload.
+- Vue 3 + TypeScript renderer inside an Electron desktop application.
+- Explicit preload bridge instead of exposing Node/Electron APIs directly to the renderer.
+- Typed IPC request/response contracts shared across process boundaries.
+- Framework-independent `WorkingDialectDocument` domain model.
+- Multi-layer tokenization with word, paragraph, sentence and punctuation state.
+- Desktop file selection and reading through the Electron main process.
+- Clear separation between public application code and private runtime assets.
+- Production-only integrations replaced by explicit public-safe adapters rather than silently failing on missing files.
 
 ## Tech stack
 
@@ -119,13 +113,13 @@ Install dependencies:
 npm install
 ```
 
-Start the application in development mode:
+Start the Electron application in development mode:
 
 ```bash
 npm run dev
 ```
 
-Create a production build:
+Create a production package:
 
 ```bash
 npm run build
@@ -137,12 +131,8 @@ Build specifically for Windows:
 npm run build:win
 ```
 
-> **Note:** this public version does not include the private `resources/` directory. Resource-dependent production features require the proprietary/third-party runtime assets from the original project and therefore may report missing-resource errors in this showcase repository.
-
-## Documentation
-
-The `docs/` directory contains implementation notes for major parts of the application, including file workflows, metadata, morphology, XHTML serialization, word editing and error handling.
+No private `resources/` directory is required by the public build configuration. Features that use those assets in production are intentionally disabled in this repository.
 
 ## Purpose of this repository
 
-This repository is intended as an engineering portfolio example rather than a redistributable version of the original product. It demonstrates the code structure and implementation approach used in a real-world desktop application while deliberately excluding assets and functionality that cannot be published due to third-party copyright and licensing constraints.
+This repository is intended as an engineering portfolio example rather than a redistributable copy of the original product. It shows how a real desktop application was structured and implemented while deliberately excluding code and assets that should not be published because of third-party copyright or licensing constraints.
